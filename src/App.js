@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { fetchGmapEndpoint } from "./api/gmap.js";
 import { fetchLcboEndpoint } from "./api/lcbo.js";
 
 class App extends Component {
