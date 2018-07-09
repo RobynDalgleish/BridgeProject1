@@ -8,7 +8,7 @@ class App extends Component {
     this.state = {
       userText: '',
       submit: '',
-      products: []
+      productsArray: [],
     }
     this.submit = this.submit.bind(this);
     // this.getProductId = this.getProductId.bind(this);
@@ -21,6 +21,10 @@ class App extends Component {
         q: `${inputedProduct}`
     }).then(data => {
       console.log(data);
+
+      this.setState({
+        productsArray: data.result
+      })
     });
   }
 
@@ -32,21 +36,34 @@ class App extends Component {
 
   submit(e) {
     e.preventDefault();
-    // prevents page reload and passes the inputed text to the getLatlng, and also calls that functions
+    // prevents page reload and passes the inputed text to getProductId, and also calls that function
     const inputedProduct = this.state.userText;
     this.getProductId(inputedProduct)
   }
 
   render() {
     return (
-      <form onSubmit={this.submit}>
-         <label htmlFor="userText"><span className="visuallyhidden">Search for an LCBO product</span></label>
-         <input type="text" id="userText" value={this.state.userText} onChange={this.updateSearch} placeholder="Search for an LCBO product" />
-        <button 
-          type="submit"> 
-          Go! 
-        </button>
-      </form>
+      <div>
+        <form onSubmit={this.submit}>
+          <label htmlFor="userText"><span className="visuallyhidden">Search for an LCBO product</span></label>
+          <input type="text" id="userText" value={this.state.userText} onChange={this.updateSearch} placeholder="Search for an LCBO product" />
+          <button 
+            type="submit"> 
+            Go! 
+          </button>
+        </form>
+        <div>
+          {
+            this.state.productsArray.map((result, i) => {
+              return(
+                <ul key={i}>
+                  {result.name}
+                </ul>
+              )
+            })
+          }
+        </div>
+      </div>
     );
   }
 }
