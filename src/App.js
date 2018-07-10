@@ -9,10 +9,17 @@ class App extends Component {
       userText: '',
       submit: '',
       productsArray: [],
+      chosenProduct: '',
     }
     this.submit = this.submit.bind(this);
+    // this.initialSearch = this.initialSearch.bind(this);
     // this.getProductId = this.getProductId.bind(this);
-    this.updateSearch = this.updateSearch.bind(this);
+    // this.updateSearch = this.updateSearch.bind(this);
+  }
+
+  initialSearch = (e) => {
+    // e.preventDefault();
+    this.setState({userText: e.target.value});
   }
 
   getProductId(inputedProduct){
@@ -28,11 +35,9 @@ class App extends Component {
     });
   }
 
-  updateSearch(e) {
-    e.preventDefault();
-    this.setState({userText: e.target.value});
-    console.log(e.target.value)
-  }
+  // getStore(productId){
+
+  // }
 
   submit(e) {
     e.preventDefault();
@@ -41,12 +46,22 @@ class App extends Component {
     this.getProductId(inputedProduct)
   }
 
+  click(e){
+    e.preventDefault();
+    console.log(e.target.id)
+    // this.setState({chosenProduct: e.target.value});
+    // const productsArrayFiltered = this.state.productsArray.filter((result) => result.name === chosenProduct)
+    // const productId = productsArrayFiltered.id
+    // console.log(productId)
+    // this.getStore(productId)
+  }
+
   render() {
     return (
       <div>
         <form onSubmit={this.submit}>
           <label htmlFor="userText"><span className="visuallyhidden">Search for an LCBO product</span></label>
-          <input type="text" id="userText" value={this.state.userText} onChange={this.updateSearch} placeholder="Search for an LCBO product" />
+          <input type="text" id="userText" value={this.state.userText} onChange={this.initialSearch} placeholder="Search for an LCBO product" />
           <button 
             type="submit"> 
             Go! 
@@ -56,9 +71,9 @@ class App extends Component {
           {
             this.state.productsArray.map((result, i) => {
               return(
-                <ul key={i}>
+                <button key={i} id={result.name} onClick={this.click}>
                   {result.name}
-                </ul>
+                </button>
               )
             })
           }
