@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { fetchLcboEndpoint } from "./api/lcbo.js";
-import { fetchGmapEndpoint } from "./api/gmap.js";
-import { GoogleMap, Marker } from "react-google-maps"
+// import { fetchGmapEndpoint } from "./api/gmap.js";
+// import { GoogleMap, Marker } from "react-google-maps"
 
 
 class App extends Component {
@@ -9,78 +9,75 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      userQuery: '',
-      submit: '',
+      productQuery: '',
+      locationQuery: '',
       productsArray: [],
-      storesArray: [],
-      searchQuery: '',
-      userLocation: '',
+      storeLocationsArray: [],
+      LatLngArray: [],
     }
     // don't need to bind like below if an arrow function is used
-
     // this.submit = this.submit.bind(this);
-    // this.initialSearch = this.initialSearch.bind(this);
-    // this.getProductId = this.getProductId.bind(this);
-    // this.updateSearch = this.updateSearch.bind(this);
   }
 
+  // 1.) onChange, setState to the value of the input fields. Store the product and location in state.
   initialQuerySearch = (e) => {
-    this.setState({userQuery: e.target.value});
+    this.setState({productQuery: e.target.value});
   }
-
   initialLocationSearch = (e) => {
-    this.setState({userLocation: e.target.value});
+    this.setState({locationQuery: e.target.value});
   }
 
-  getProductId(inputedProduct){
+  // 2.) onSubmit, prevent the page from reloading, and call the getProductId function passing in 'inputedProduct' as a parameter (productQuery from state)
+  submit = (e) => {
+    e.preventDefault();
+    const inputedProduct = this.state.productQuery;
+    this.getProductId(inputedProduct);
+  }
+
+  // 3.) Using the inputProduct, get make a call to the LCBO API to and store the resulting data in state. Render the names of everything in the productsArray as buttons.
+  getProductId = (inputedProduct) => {
     console.log(inputedProduct);
     fetchLcboEndpoint("products", {
         q: `${inputedProduct}`
     }).then(data => {
       console.log(data);
-
       this.setState({
         productsArray: data.result
       })
     });
   }
 
-  getLatLng(inputedLocation) {
-    console.log(inputedLocation);
-  }
+  // 4.) onClick (of a button containing the name of a product) filter the productsArray to grab the id of the corresponding product name, Then call the getLocationsForGmap function.
+    click = (e) => {
+      e.preventDefault();
+      console.log(e.target.id)
+      const chosenProduct = e.target.id;
+      const productsArrayFiltered = this.state.productsArray.filter((result) => result.name === chosenProduct)
+      console.log(productsArrayFiltered)
+      const productId = productsArrayFiltered[0].id
+      console.log(productId)
+      const inputedLocation = this.state.locationQuery;
+      this.getStoreLocations(productId, inputedLocation);
+    }
 
-  getStore(productId){
-      fetchLcboEndpoint("inventories", {
-          product_id: `${productId}`
+  // 5.) Use the product id and the location as query parameters to grab the stores that fit both those criteria (have the product and are in that location). Store that as storeLocationsArray in state.
+  getStoreLocations = (productId, inputedLocation) => {
+      fetchLcboEndpoint("stores", {
+          product_id: `${productId}`,
+          geo: `${inputedLocation}`,
       }).then(data => {
         console.log(data);
         this.setState({
-          storesArray: data.result
+          storeLocationsArray: data.result
         })
       });
-      // this.MyMapComponent()
+      this.getLatLng();
   }
 
-  submit = (e) => {
-    e.preventDefault();
-    // prevents page reload and passes the inputed text to getProductId, and also calls that function
-    const inputedProduct = this.state.userQuery;
-    const inputedLocation = this.state.userLocation;
-    this.getProductId(inputedProduct)
-    this.getLatLng(inputedLocation)
-  }
+  // 6.) Map through the storeLocationsArray to grab the latitude and longitude of each unique store.
+  getLatLng = () => {
 
-  click = (e) => {
-    e.preventDefault();
-    console.log(e.target.id)
-    const chosenProduct = e.target.id;
-    const productsArrayFiltered = this.state.productsArray.filter((result) => result.name === chosenProduct)
-    console.log(productsArrayFiltered)
-    const productId = productsArrayFiltered[0].id
-    console.log(productId)
-    this.getStore(productId)
   }
-
   // MyMapComponent = (props) =>
   //   <GoogleMap
   //     defaultZoom={8}
@@ -94,11 +91,11 @@ class App extends Component {
     return (
       <div>
         <form onSubmit={this.submit}>
-          <label htmlFor="userQuery"><span className="visuallyhidden">Search for an LCBO product</span></label>
-          <input type="text" id="userQuery" value={this.state.userQuery} onChange={this.initialQuerySearch} placeholder="Search for an LCBO product" />
+          <label htmlFor="productQuery"><span className="visuallyhidden">Search for an LCBO product</span></label>
+          <input type="text" id="productQuery" value={this.state.productQuery} onChange={this.initialQuerySearch} placeholder="Search for an LCBO product" />
 
-          <label htmlFor="userLocation"><span className="visuallyhidden">Enter a location</span></label>
-          <input type="text" id="userLocation" value={this.state.userLocation} onChange={this.initialLocationSearch} placeholder="Enter a location" />
+          <label htmlFor="locationQuery"><span className="visuallyhidden">Enter a location</span></label>
+          <input type="text" id="locationQuery" value={this.state.locationQuery} onChange={this.initialLocationSearch} placeholder="Enter a location" />
           <button 
             type="submit"> 
             Go! 
