@@ -48,10 +48,9 @@ class App extends Component {
   }
 
   // 4.) onClick (of a button containing the name of a product) filter the productsArray to grab the id of the corresponding product name, Then call the getLocationsForGmap function.
-    click = e => {
+    click = (chosenProduct, e) => {
       e.preventDefault();
-      console.log(e.target.id)
-      const chosenProduct = e.target.id;
+      console.log(e.target)
       const productsArrayFiltered = this.state.productsArray.filter(result => result.name === chosenProduct)
       console.log(productsArrayFiltered)
       const productId = productsArrayFiltered[0].id
@@ -113,17 +112,21 @@ class App extends Component {
 
         </form>
 
-        <div>
+        <ul>
           {
             this.state.productsArray.map((result, i) => {
               return(
-                <button key={i} id={result.name} onClick={this.click}>
-                  {result.name}
-                </button>
+                <li key={i}>
+                  {/* https://reactjs.org/docs/handling-events.html */}
+                  <a href='' onClick={this.click.bind(this, result.name)}>
+                    <img width={100} alt='' src={result.image_url}/>
+                    <p>{result.name}</p>
+                  </a>
+                </li>
               )
             })
           }
-        </div>
+        </ul>
 
       </div>
     );
