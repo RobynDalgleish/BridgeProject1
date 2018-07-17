@@ -1,18 +1,18 @@
-const { REACT_APP_GMAP_API_KEY } = process.env;
 
-const GMAP_API_BASE_URL = "https://maps.googleapis.com/maps/api/";
+// import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
 
-const objectToQueryParams = params =>
-  Object.keys(params)
-    .map(key => {
-      return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
-    })
-    .join("&");
+// const { REACT_APP_GMAP_API_KEY } = process.env;
 
-export const fetchGmapEndpoint = (endpoint, params, options = {}) =>
-  fetch(`${GMAP_API_BASE_URL}${endpoint}?${objectToQueryParams(params)}`, {
-    ...options,
-    headers: {
-      Authorization: `Token ${REACT_APP_GMAP_API_KEY}`
-    }
-  }).then(res => res.json());
+// const GMAP_API_BASE_URL = "https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places";
+
+
+// const MyMapComponent = (props) =>
+//   <GoogleMap
+//     defaultZoom={8}
+//     defaultCenter={{ lat: -34.397, lng: 150.644 }}
+//   >
+//     {props.isMarkerShown && <Marker position={{ lat: -34.397, lng: 150.644 }} />}
+//   </GoogleMap>
+
+// <MyMapComponent isMarkerShown />// Map with a Marker
+// <MyMapComponent isMarkerShown={false} />// Just only Map
